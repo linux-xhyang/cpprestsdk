@@ -35,8 +35,10 @@
  #pragma clang diagnostic push
  #pragma clang diagnostic ignored "-Wconversion"
  #pragma clang diagnostic ignored "-Winfinite-recursion"
+#if !defined(__ANDROID__)
  #pragma clang diagnostic ignored "-Wtautological-constant-compare"
  #pragma clang diagnostic ignored "-Wtautological-unsigned-enum-zero-compare"
+#endif
  #pragma clang diagnostic ignored "-Wcast-qual"
 #elif defined(__GNUC__)
  #pragma GCC diagnostic push
@@ -388,11 +390,11 @@ public:
         m_thread = std::thread([&client]()
         {
 #if defined(__ANDROID__)
-            crossplat::get_jvm_env();
+//            crossplat::get_jvm_env();
 #endif
             client.run();
 #if defined(__ANDROID__)
-            crossplat::JVM.load()->DetachCurrentThread();
+//            crossplat::JVM.load()->DetachCurrentThread();
 #endif
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)

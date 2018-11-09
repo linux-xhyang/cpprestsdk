@@ -1,5 +1,5 @@
 # Configuration parameters
-ANDROID_API = 18
+ANDROID_API = 23
 ANDROID_ABI = armeabi-v7a
 ANDROID_HOST = linux-x86_64
 ANDROID_TOOLCHAIN = gcc
@@ -141,7 +141,7 @@ $(OPENSSL_PREFIX)/lib/libssl.a: $(OPENSSL_TARBALL)
 	export PATH="$(ANDROID_GCC_TOOLCHAIN)/bin:$(ANDROID_LLVM_TOOLCHAIN)/bin:$(PATH)" && \
 	( \
 		cd $(OPENSSL_SOURCE); \
-		perl Configure $(OPENSSL_TARGET) shared $(OPENSSL_OPTIONS) --prefix="`pwd`/../$(OPENSSL_PREFIX)" $(OPENSSL_CFLAGS) && \
+		perl Configure $(OPENSSL_TARGET) shared $(OPENSSL_OPTIONS) --prefix="`pwd`/../$(OPENSSL_PREFIX)" $(OPENSSL_CFLAGS) no-asm && \
 		make depend && \
 		make all && \
 		make install CC=$(OPENSSL_CC) RANLIB=$(OPENSSL_RANLIB); \

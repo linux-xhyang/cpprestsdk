@@ -24,7 +24,7 @@ DO_BOOST=1
 DO_OPENSSL=1
 DO_CPPRESTSDK=1
 
-BOOSTVER=1.65.1
+BOOSTVER=1.68.0
 OPENSSLVER=1.0.2k
 
 API=15
@@ -162,13 +162,25 @@ if [ "${DO_CPPRESTSDK}" == "1" ]; then
     function build_cpprestsdk { (
         mkdir -p $1
         cd $1
+
+        ARCHID=""
+        if [ "$2" == "armeabi-v7a" ];then
+            ARCHID="ARM32"
+        else
+            ARCHID="X86"
+        fi
+
         cmake "${DIR}/.." \
             -DCMAKE_TOOLCHAIN_FILE="${ANDROID_NDK}/build/cmake/android.toolchain.cmake" \
             -DANDROID_NDK="${ANDROID_NDK}" \
             -DANDROID_TOOLCHAIN=clang \
             -DANDROID_ABI=$2 \
+            -DANDROID_PLATFORM="android-23" \
+            -DANDROID_STL="${STL}" \
             -DBOOST_VERSION="${BOOSTVER}" \
+            -DCMAKE_CXX_COMPILER_ARCHITECTURE_ID=${ARCHID} \
             -DCMAKE_BUILD_TYPE=$3
+
         make -j $NCPU
     ) }
 
@@ -177,4 +189,5 @@ if [ "${DO_CPPRESTSDK}" == "1" ]; then
     build_cpprestsdk build.armv7.release armeabi-v7a Release
     build_cpprestsdk build.x86.debug x86 Debug
     build_cpprestsdk build.x86.release x86 Release
+
 fi

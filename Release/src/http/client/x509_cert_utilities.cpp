@@ -51,12 +51,35 @@ bool verify_cert_chain_platform_specific(boost::asio::ssl::verify_context& verif
         return true;
     }
 
+#if defined(ANDROID) || defined(__ANDROID__)
+    {
+        const char* android_cacerts = "/system/etc/security/cacerts";
+        X509_STORE_CTX *ctx = verifyCtx.native_handle();
+        if (SSL* ssl = static_cast<SSL*>(
+                ::X509_STORE_CTX_get_ex_data(
+                     ctx, ::SSL_get_ex_data_X509_STORE_CTX_idx()))){
+            if (SSL_CTX* handle = ::SSL_get_SSL_CTX(ssl))
+            {
+                auto verify_result = SSL_CTX_load_verify_locations(handle, nullptr,android_cacerts);
+
+                return verify_result;
+            }
+            else
+                std::cout << "verify_cert_chain_platform_specific SSL_CTX is null" << std::endl;
+        }
+        else
+            std::cout << "verify_cert_chain_platform_specific SSL is null" << std::endl;
+
+        return false;
+    }
+#endif
+
 #if (OPENSSL_VERSION_NUMBER < 0x10100000L)
     STACK_OF(X509)* certStack = X509_STORE_CTX_get_chain(storeContext);
-#else 
+#else
     STACK_OF(X509)* certStack = X509_STORE_CTX_get0_chain(storeContext);
 #endif
-    
+
     const int numCerts = sk_X509_num(certStack);
     if (numCerts < 0)
     {

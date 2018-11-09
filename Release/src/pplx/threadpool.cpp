@@ -24,14 +24,13 @@ namespace
 #if defined(__ANDROID__)
 // This pointer will be 0-initialized by default (at load time).
 std::atomic<JavaVM*> JVM;
-
 static void abort_if_no_jvm()
 {
-    if (JVM == nullptr)
+    if (crossplat::JVM == nullptr)
     {
         __android_log_print(ANDROID_LOG_ERROR, "CPPRESTSDK", "%s",
-            "The CppREST SDK must be initialized before first use on android: "
-            "https://github.com/Microsoft/cpprestsdk/wiki/How-to-build-for-Android");
+                            "The CppREST SDK must be initialized before first use on android: "
+                            "https://github.com/Microsoft/cpprestsdk/wiki/How-to-build-for-Android");
         std::abort();
     }
 }
@@ -48,7 +47,7 @@ JNIEnv* get_jvm_env()
 
     return env;
 }
-#endif // __ANDROID__
+#endif
 
 struct threadpool_impl final : crossplat::threadpool
 {
@@ -92,13 +91,13 @@ private:
     {
 #if defined(__ANDROID__)
         // Calling get_jvm_env() here forces the thread to be attached.
-        get_jvm_env();
-        pthread_cleanup_push(detach_from_java, nullptr);
+        //get_jvm_env();
+        //pthread_cleanup_push(detach_from_java, nullptr);
 #endif // __ANDROID__
         threadpool_impl* _this = reinterpret_cast<threadpool_impl*>(arg);
         _this->m_service.run();
 #if defined(__ANDROID__)
-        pthread_cleanup_pop(true);
+        //pthread_cleanup_pop(true);
 #endif // __ANDROID__
         return arg;
     }
@@ -149,7 +148,7 @@ std::pair<bool, platform_shared_threadpool*> initialize_shared_threadpool(size_t
     // remove this if/when call_once is supported
     static std::mutex mtx;
     static std::atomic<bool> initialized;
-    abort_if_no_jvm();
+    //abort_if_no_jvm();
     if (!initialized.load())
     {
         std::lock_guard<std::mutex> guard(mtx);

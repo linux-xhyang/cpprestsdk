@@ -205,7 +205,7 @@ if(WIN32)
     target_compile_definitions(cpprest PUBLIC -D_NO_ASYNCRTIMP -D_NO_PPLXIMP)
   endif()
 elseif(ANDROID)
-  target_link_libraries(cpprest PRIVATE ${ANDROID_STL_FLAGS})
+  target_link_libraries(cpprest PRIVATE ${ANDROID_STL_FLAGS} log)
 endif()
 
 if (WIN32 AND NOT WINDOWS_STORE AND NOT WINDOWS_PHONE)

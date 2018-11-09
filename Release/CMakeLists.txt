@@ -121,7 +121,7 @@ if(IOS)
   set(CMAKE_CXX_FLAGS "-fvisibility=hidden")
 elseif(ANDROID)
   # These are used in the shared library case
-  set(ANDROID_LIBS atomic dl)
+  set(ANDROID_LIBS atomic dl log)
 elseif(UNIX) # This includes OSX
 elseif(WIN32)
   add_definitions(-DUNICODE -D_UNICODE -DWIN32 -D_SCL_SECURE_NO_WARNINGS)
